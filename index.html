@@ -618,6 +618,16 @@
     color: var(--success);
   }
 
+  .search-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+  }
+  
+  .search-btn:disabled:hover {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  }
+
   .difference-negative {
     background-color: rgba(239, 68, 68, 0.1);
     color: var(--danger);
@@ -682,26 +692,30 @@
       <p>Track real-time subscriber counts and growth analytics for any YouTube channel</p>
     </section>
 
-    <section class="search-section fade-in" id="main-search-section">
-      <div class="search-container">
-        <input type="text" class="search-input" id="channel-input" placeholder="Enter YouTube channel name or URL" onkeypress="handleKeyPress(event)">
-        <div class="cf-turnstile" 
-          data-sitekey="0x4AAAAAABvEhLhof1p8gqOH" 
-          data-callback="onTurnstileSuccess">
-        </div>
-        <button class="search-btn" onclick="fetchChannelData()">
-          <span id="search-text">Search</span>
-          <div class="loader" id="loader"></div>
-        </button>
-        <!-- Script Turnstile à ajouter juste avant </body> -->
-        <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-        <!-- Nouveau bouton Compare -->
-        <button class="search-btn" id="show-compare-search-btn" onclick="showCompareSearchBar()" style="margin-left:8px;">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15l-6-6-6 6"></path><path d="M21 9l-6 6-6-6"></path></svg>
-          Compare
-        </button>
+  <section class="search-section fade-in" id="main-search-section">
+    <div class="search-container">
+      <input type="text" class="search-input" id="channel-input" placeholder="Enter YouTube channel name or URL" onkeypress="handleKeyPress(event)">
+      <div class="cf-turnstile" 
+        data-sitekey="0x4AAAAAABvEhLhof1p8gqOH" 
+        data-callback="onTurnstileSuccess"
+        data-error-callback="onTurnstileError"
+        data-expired-callback="onTurnstileExpired">
       </div>
-    </section>
+      <button class="search-btn" id="search-btn" onclick="fetchChannelData()" disabled>
+        <span id="search-text">Search</span>
+        <div class="loader" id="loader"></div>
+      </button>
+      
+      <!-- Script Turnstile -->
+      <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+      
+      <!-- Nouveau bouton Compare -->
+      <button class="search-btn" id="show-compare-search-btn" onclick="showCompareSearchBar()" style="margin-left:8px;" disabled>
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15l-6-6-6 6"></path><path d="M21 9l-6 6-6-6"></path></svg>
+        Compare
+      </button>
+    </div>
+  </section>
 
     <!-- Barre de recherche pour la comparaison (cachée par défaut) -->
     <section class="search-section fade-in" id="compare-search-section" style="display:none;">
@@ -839,7 +853,6 @@
   <div class="toast" id="toast"></div>
 
   <script>
-    // Constants
     const API_BASE_URL = 'https://backend.mixerno.space/api/youtube/estv3/';
     const SEARCH_API_URL = 'https://mixerno.space/api/youtube-channel-counter/search/';
     const MAX_DATA_POINTS = 3600;
@@ -854,7 +867,8 @@
       historicalData: [],
       lastSubscriberCount: 0,
       isDarkTheme: localStorage.getItem('theme') === 'dark',
-      compareChannels: [] // Array to store channels to compare
+      compareChannels: [], // Array to store channels to compare
+      isTurnstileValid: false // Nouvel état pour suivre la validation Turnstile
     };
     
     // DOM elements cache
@@ -875,9 +889,33 @@
       themeSwitch: document.getElementById("theme-switch"),
       body: document.body,
       compareSection: document.getElementById("compare-section"),
-      compareChannelsContainer: document.getElementById("compare-channels")
+      compareChannelsContainer: document.getElementById("compare-channels"),
+      searchBtn: document.getElementById("search-btn"), // Nouvel élément
+      showCompareBtn: document.getElementById("show-compare-search-btn") // Nouvel élément
     };
-    
+
+    function onTurnstileSuccess(token) {
+      state.isTurnstileValid = true;
+      elements.searchBtn.disabled = false;
+      elements.showCompareBtn.disabled = false;
+      showToast("Verification successful", 2000);
+    }
+
+    // Callback en cas d'erreur Turnstile
+    function onTurnstileError() {
+      state.isTurnstileValid = false;
+      elements.searchBtn.disabled = true;
+      elements.showCompareBtn.disabled = true;
+      showToast("Verification failed. Please try again.", 3000);
+    }
+
+    // Callback lorsque le token Turnstile expire
+    function onTurnstileExpired() {
+      state.isTurnstileValid = false;
+      elements.searchBtn.disabled = true;
+      elements.showCompareBtn.disabled = true;
+      showToast("Verification expired. Please complete the challenge again.", 3000);
+    }
 
     async function verify() {
      const token = document.querySelector('.cf-turnstile iframe').contentWindow.turnstileToken; // simplifié
@@ -999,12 +1037,19 @@
     
     // Fetch channel data based on search input
     async function fetchChannelData() {
+      // Vérifier d'abord si Turnstile est validé
+      if (!state.isTurnstileValid) {
+        showToast("Please complete the verification first");
+        return;
+      }
+      
       const channelName = elements.channelInput.value.trim();
       if (!channelName) {
         showToast("Please enter a channel name");
         return;
       }
 
+      // Le reste de la fonction reste inchangé
       elements.loader.style.display = "block";
       elements.searchText.style.display = "none";
       
@@ -1553,6 +1598,12 @@
     }
 
     function showCompareSearchBar() {
+      // Vérifier d'abord si Turnstile est validé
+      if (!state.isTurnstileValid) {
+        showToast("Please complete the verification first");
+        return;
+      }
+      
       document.getElementById('compare-search-section').style.display = 'block';
       document.getElementById('main-search-section').style.display = 'none';
       document.getElementById('results-section').style.display = 'none';
