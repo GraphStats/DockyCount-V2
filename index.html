@@ -1623,6 +1623,45 @@
         showToast("Please add two channels to compare");
       }
     }
+
+    function fetchCompareSearchData() {
+      const channel1 = compareSearchState.channel1;
+      const channel2 = compareSearchState.channel2;
+
+      if (!channel1 || !channel2) {
+        showToast("Please select two channels to compare");
+        return;
+      }
+
+      elements.compareSection.style.display = 'block';
+
+      Promise.all([
+        fetch(`${API_BASE_URL}${channel1.id}`),
+        fetch(`${API_BASE_URL}${channel2.id}`)
+      ])
+        .then(responses => {
+          if (!responses[0].ok || !responses[1].ok) {
+            throw new Error("One or both API requests failed");
+          }
+          return Promise.all(responses.map(res => res.json()));
+        })
+        .then(data => {
+          const [data1, data2] = data;
+          if (!data1.items?.[0] || !data2.items?.[0]) {
+            throw new Error("Invalid data received from API");
+          }
+
+          channel1.count = parseInt(data1.items[0].statistics.subscriberCount) || 0;
+          channel2.count = parseInt(data2.items[0].statistics.subscriberCount) || 0;
+
+          renderCompare(channel1, channel2);
+        })
+        .catch(error => {
+          console.error("Error fetching comparison data:", error);
+          showToast("Error fetching comparison data");
+          elements.compareSection.style.display = 'none';
+        });
+    }
   </script>
 </body>
 </html>
