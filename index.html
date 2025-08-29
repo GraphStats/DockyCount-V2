@@ -1615,6 +1615,14 @@
       closeCompare();
     }
     window.showCompareSearchBar = showCompareSearchBar;
+
+    function showCompare() {
+      if (state.compareChannels.length === 2) {
+        fetchCompareData();
+      } else {
+        showToast("Please add two channels to compare");
+      }
+    }
   </script>
 </body>
 </html>
