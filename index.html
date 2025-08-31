@@ -22,9 +22,9 @@
       --primary-light: #818cf8;
       --text: #f8fafc;
       --text-light: #9ca3af;
-      --bg: #0a0a0a;
-      --card-bg: rgba(15, 15, 17, 0.6);
-      --card-border: rgba(255, 255, 255, 0.05);
+      --bg: #0f1117;
+      --card-bg: rgba(20, 22, 30, 0.8);
+      --card-border: rgba(255, 255, 255, 0.08);
       --success: #10b981;
       --danger: #ef4444;
       --border: rgba(255, 255, 255, 0.1);
@@ -36,6 +36,7 @@
       color: var(--text);
       scroll-behavior: smooth;
       overflow-x: hidden;
+      line-height: 1.6;
     }
 
     .gradient-text {
@@ -55,85 +56,15 @@
       -webkit-backdrop-filter: blur(12px);
       border-radius: 16px;
       border: 1px solid var(--card-border);
-      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: all 0.3s ease;
     }
 
     .glass-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.15);
-      border-color: rgba(99, 102, 241, 0.3);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px -6px rgba(79, 70, 229, 0.15);
+      border-color: rgba(99, 102, 241, 0.2);
     }
 
-    .glow-effect {
-      position: relative;
-      overflow: hidden;
-    }
-
-    .glow-effect::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(99, 102, 241, 0.1),
-        transparent
-      );
-      transition: all 0.6s ease;
-    }
-
-    .glow-effect:hover::before {
-      left: 100%;
-    }
-
-    .animated-border {
-      position: relative;
-    }
-
-    .animated-border::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 0;
-      height: 2px;
-      background: linear-gradient(90deg, var(--primary), var(--primary-light));
-      transition: width 0.4s ease;
-    }
-
-    .animated-border:hover::after {
-      width: 100%;
-    }
-
-    .bg-grid {
-      background-image: 
-        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-      background-size: 40px 40px;
-    }
-
-    .fade-in {
-      animation: fadeIn 1s ease-in forwards;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    .scale-in {
-      animation: scaleIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-    }
-
-    @keyframes scaleIn {
-      from { transform: scale(0.95); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
-    }
-
-    /* Custom styles for the application */
     .search-input {
       background: rgba(15, 15, 17, 0.4);
       border: 1px solid var(--border);
@@ -169,24 +100,62 @@
     }
 
     .sidebar-favorites {
-      background: rgba(15, 15, 17, 0.8);
+      background: rgba(15, 15, 17, 0.9);
       border-right: 1px solid var(--border);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
     }
 
-    .theme-toggle .slider {
-      background-color: #4B5563;
+    .bg-grid {
+      background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
     }
 
-    input:checked + .slider {
-      background-color: var(--primary);
+    .fade-in {
+      animation: fadeIn 0.5s ease-in forwards;
     }
 
-    .toast {
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: rgba(15, 15, 17, 0.4);
+    }
+
+    ::-webkit-scrollbar-thumb {
       background: var(--primary);
+      border-radius: 4px;
+    }
+
+    /* Section spacing improvements */
+    section {
+      margin-bottom: 1.5rem;
+    }
+
+    /* Improved button styles */
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
       color: white;
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px -3px rgba(99, 102, 241, 0.3);
+    }
+
+    /* Card content spacing */
+    .card-content {
+      padding: 1.5rem;
     }
 
     /* Responsive adjustments */
@@ -197,6 +166,11 @@
       
       main.container {
         margin-left: 0 !important;
+        padding: 0 1rem;
+      }
+
+      .card-content {
+        padding: 1rem;
       }
     }
     
@@ -205,206 +179,247 @@
         margin-left: 260px;
       }
     }
+
+    /* Simplified animations */
+    .animate-float {
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+
+    /* Improved focus states */
+    button:focus, input:focus {
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
+    }
+
+    /* Better contrast for text */
+    .text-muted {
+      color: var(--text-light);
+    }
   </style>
 </head>
-<body class="bg-grid">
+<body class="bg-grid min-h-screen flex flex-col">
   <!-- Sidebar Favorites -->
-  <aside class="sidebar-favorites fixed top-0 left-0 w-64 h-full z-40 p-6" id="sidebar-favorites">
+  <aside class="sidebar-favorites fixed top-0 left-0 w-64 h-full z-40 p-6 hidden md:block" id="sidebar-favorites">
     <div class="text-xl font-bold gradient-text mb-4">Your Favorite Channels</div>
-    <div class="favorites-list" id="favorites-list"></div>
+    <div class="favorites-list overflow-y-auto max-h-[calc(100vh-120px)]" id="favorites-list">
+      <div class="text-gray-500 text-sm">No favorite channels yet.</div>
+    </div>
   </aside>
 
   <!-- Navigation Bar -->
-  <nav class="fixed top-0 left-0 w-full bg-black/80 backdrop-blur-lg z-50 border-b border-gray-900">
-    <div class="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
-      <a href="/" class="text-2xl font-bold gradient-text animate__animated animate__fadeIn">
-        <div class="flex items-center">
-          <img src="https://dockycount.up.railway.app/logo.png" alt="DockyCount Logo" class="h-8 mr-2">
-          DockyCount
-        </div>
+  <nav class="sticky top-0 bg-black/90 backdrop-blur-lg z-50 border-b border-gray-800">
+    <div class="max-w-7xl mx-auto flex justify-between items-center px-6 py-3">
+      <a href="/" class="text-xl font-bold gradient-text flex items-center">
+        <img src="https://dockycount.up.railway.app/logo.png" alt="DockyCount Logo" class="h-6 mr-2">
+        DockyCount
       </a>
-      <div class="flex items-center space-x-4">
-        <label class="theme-toggle relative w-10 h-5">
+      <div class="flex items-center space-x-3">
+        <button class="md:hidden text-gray-400 hover:text-white" id="mobile-menu-button">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+        <label class="theme-toggle relative w-10 h-5 flex items-center">
           <input type="checkbox" id="theme-switch" class="sr-only">
-          <span class="slider absolute top-0 left-0 right-0 bottom-0 rounded-full transition-colors"></span>
+          <span class="slider absolute top-0 left-0 right-0 bottom-0 rounded-full transition-colors bg-gray-600"></span>
           <span class="absolute h-3 w-3 bg-white rounded-full transition-transform top-1 left-1" id="theme-knob"></span>
         </label>
       </div>
     </div>
   </nav>
 
-  <main class="container max-w-7xl mx-auto px-6 pt-24">
+  <main class="container max-w-5xl mx-auto px-4 py-20 flex-grow">
     <!-- Hero Section -->
-    <section class="min-h-[50vh] flex flex-col justify-center items-center text-center relative overflow-hidden mb-16">
-      <div class="absolute inset-0 overflow-hidden">
-        <div class="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-indigo-900/30 blur-3xl animate-pulse"></div>
-        <div class="absolute bottom-1/3 right-1/3 w-80 h-80 rounded-full bg-indigo-800/20 blur-3xl animate-pulse delay-500"></div>
-      </div>
-      
-      <div class="relative z-10 max-w-4xl" data-aos="fade-up">
-        <h1 class="text-5xl md:text-7xl font-bold mb-6 gradient-text animate__animated animate__fadeInDown">DockyCount</h1>
-        <p class="text-xl text-gray-300 mt-6 max-w-2xl mx-auto leading-relaxed">
+    <section class="text-center mb-10">
+      <div class="mb-8">
+        <h1 class="text-4xl md:text-5xl font-bold mb-4 gradient-text">DockyCount</h1>
+        <p class="text-lg text-gray-300 max-w-2xl mx-auto">
           Track real-time subscriber counts and growth analytics for any YouTube channel
         </p>
       </div>
     </section>
 
     <!-- Search Section -->
-    <section class="glass-card p-8 mb-12 glow-effect" data-aos="fade-up" id="main-search-section">
-      <div class="flex flex-col md:flex-row gap-4 w-full">
-        <input type="text" class="search-input flex-1 px-5 py-3 rounded-xl" id="channel-input" placeholder="Enter YouTube channel name or URL" onkeypress="handleKeyPress(event)">
-        <div class="cf-turnstile" data-sitekey="0x4AAAAAABvEhLhof1p8gqOH" data-callback="onTurnstileSuccess"></div>
-        <button class="gradient-bg text-white font-medium rounded-xl px-6 py-3 flex items-center justify-center hover:shadow-lg hover:shadow-indigo-500/20 transition-all duration-300 transform hover:scale-105" onclick="fetchChannelData()">
-          <span id="search-text">Search</span>
-          <div class="loader hidden ml-2" id="loader"></div>
-        </button>
-        <button class="gradient-bg text-white font-medium rounded-xl px-6 py-3 flex items-center justify-center hover:shadow-lg hover:shadow-indigo-500/20 transition-all duration-300 transform hover:scale-105" id="show-compare-search-btn" onclick="showCompareSearchBar()">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-          </svg>
-          Compare
-        </button>
+    <section class="glass-card mb-8" data-aos="fade-up">
+      <div class="card-content">
+        <div class="flex flex-col gap-4">
+          <div class="flex flex-col md:flex-row gap-3 w-full">
+            <input type="text" class="search-input flex-1 px-4 py-3 rounded-lg" id="channel-input" placeholder="Enter YouTube channel name or URL" onkeypress="handleKeyPress(event)">
+            <button class="btn-primary font-medium rounded-lg px-5 py-3 flex items-center justify-center min-w-[120px]" onclick="fetchChannelData()">
+              <span id="search-text">Search</span>
+              <div class="loader hidden ml-2" id="loader"></div>
+            </button>
+          </div>
+          <div class="flex justify-center mt-2">
+            <button class="text-sm text-gray-400 hover:text-white flex items-center" id="show-compare-search-btn" onclick="showCompareSearchBar()">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+              </svg>
+              Compare channels
+            </button>
+          </div>
+        </div>
       </div>
     </section>
 
     <!-- Compare Search Section -->
-    <section class="glass-card p-8 mb-12 glow-effect hidden" id="compare-search-section" data-aos="fade-up">
-      <div class="flex flex-col gap-6 w-full">
-        <div class="flex flex-col md:flex-row gap-4">
-          <input type="text" class="search-input flex-1 px-5 py-3 rounded-xl" id="compare-input-1" placeholder="First channel name or URL">
-          <button class="gradient-bg text-white font-medium rounded-xl px-6 py-3 flex items-center justify-center hover:shadow-lg hover:shadow-indigo-500/20 transition-all duration-300" onclick="fetchCompareSearch(1)">
-            Search
-          </button>
-        </div>
-        <div id="compare-results-1" class="w-full"></div>
-        
-        <div class="flex flex-col md:flex-row gap-4">
-          <input type="text" class="search-input flex-1 px-5 py-3 rounded-xl" id="compare-input-2" placeholder="Second channel name or URL">
-          <button class="gradient-bg text-white font-medium rounded-xl px-6 py-3 flex items-center justify-center hover:shadow-lg hover:shadow-indigo-500/20 transition-all duration-300" onclick="fetchCompareSearch(2)">
-            Search
-          </button>
-        </div>
-        <div id="compare-results-2" class="w-full"></div>
-        
-        <div class="flex justify-end gap-4 mt-4">
-          <button class="action-btn px-4 py-2 rounded-xl" onclick="hideCompareSearchBar()">Cancel</button>
+    <section class="glass-card mb-8 hidden" id="compare-search-section" data-aos="fade-up">
+      <div class="card-content">
+        <div class="flex flex-col gap-5 w-full">
+          <div>
+            <h3 class="text-lg font-semibold mb-3">Compare Channels</h3>
+            <div class="flex flex-col md:flex-row gap-3">
+              <input type="text" class="search-input flex-1 px-4 py-3 rounded-lg" id="compare-input-1" placeholder="First channel name or URL">
+              <button class="btn-primary font-medium rounded-lg px-4 py-3 flex items-center justify-center min-w-[100px]" onclick="fetchCompareSearch(1)">
+                Search
+              </button>
+            </div>
+            <div id="compare-results-1" class="w-full mt-3"></div>
+          </div>
+          
+          <div>
+            <div class="flex flex-col md:flex-row gap-3">
+              <input type="text" class="search-input flex-1 px-4 py-3 rounded-lg" id="compare-input-2" placeholder="Second channel name or URL">
+              <button class="btn-primary font-medium rounded-lg px-4 py-3 flex items-center justify-center min-w-[100px]" onclick="fetchCompareSearch(2)">
+                Search
+              </button>
+            </div>
+            <div id="compare-results-2" class="w-full mt-3"></div>
+          </div>
+          
+          <div class="flex justify-end gap-3 mt-4">
+            <button class="action-btn px-4 py-2 rounded-lg text-sm" onclick="hideCompareSearchBar()">Cancel</button>
+          </div>
         </div>
       </div>
     </section>
 
     <!-- Results Section -->
-    <section class="glass-card p-8 mb-12 glow-effect hidden" id="results-section" data-aos="fade-up">
-      <h2 class="text-2xl font-bold mb-6 gradient-text">Search Results</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="results-grid"></div>
+    <section class="glass-card mb-8 hidden" id="results-section" data-aos="fade-up">
+      <div class="card-content">
+        <h2 class="text-xl font-semibold mb-5">Search Results</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="results-grid"></div>
+      </div>
     </section>
 
     <!-- Counter Section -->
-    <section class="glass-card p-8 mb-12 glow-effect hidden" id="counter-section" data-aos="fade-up">
-      <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
-        <div class="flex items-center mb-4 md:mb-0">
-          <img src="" alt="Channel Avatar" class="counter-avatar w-16 h-16 rounded-full mr-4" id="channel-avatar">
-          <div>
-            <h3 class="channel-title text-xl font-bold" id="channel-name"></h3>
-            <button class="favorite-star text-2xl mt-1 bg-transparent border-none cursor-pointer" id="favorite-star" title="Add to favorites">
-              &#9734;
+    <section class="glass-card mb-8 hidden" id="counter-section" data-aos="fade-up">
+      <div class="card-content">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+          <div class="flex items-center mb-4 md:mb-0">
+            <img src="" alt="Channel Avatar" class="counter-avatar w-14 h-14 rounded-full mr-4" id="channel-avatar">
+            <div>
+              <h3 class="channel-title text-lg font-semibold" id="channel-name"></h3>
+              <button class="favorite-star text-xl mt-1 bg-transparent border-none cursor-pointer text-yellow-400" id="favorite-star" title="Add to favorites">
+                &#9734;
+              </button>
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button class="action-btn px-3 py-2 rounded-lg flex items-center text-sm" onclick="shareChannel()">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+              </svg>
+              Share
+            </button>
+            <button class="action-btn px-3 py-2 rounded-lg flex items-center text-sm" onclick="toggleChart()" id="toggle-chart-button">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+              Chart
+            </button>
+            <button class="action-btn px-3 py-2 rounded-lg flex items-center text-sm" onclick="addToCompare()" id="compare-button">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+              Compare
             </button>
           </div>
         </div>
-        <div class="flex flex-wrap gap-3">
-          <button class="action-btn px-4 py-2 rounded-xl flex items-center" onclick="shareChannel()">
+
+        <div class="text-center my-8">
+          <div class="subscriber-count text-5xl md:text-6xl font-bold mb-3" id="subscriber-count">0</div>
+          <div class="subscriber-change text-lg font-medium" id="subscriber-change"></div>
+        </div>
+
+        <div class="flex justify-center gap-3 mt-6">
+          <button class="action-btn px-3 py-2 rounded-lg flex items-center text-sm" onclick="refreshCounter()">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
-            Share
+            Refresh
           </button>
-          <button class="action-btn px-4 py-2 rounded-xl flex items-center" onclick="toggleChart()" id="toggle-chart-button">
+          <button class="action-btn px-3 py-2 rounded-lg flex items-center text-sm" onclick="activateMinimalMode()">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
             </svg>
-            Show Chart
-          </button>
-          <button class="action-btn px-4 py-2 rounded-xl flex items-center" onclick="addToCompare()" id="compare-button">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-            </svg>
-            Compare
+            Minimal
           </button>
         </div>
-      </div>
-
-      <div class="text-center my-10">
-        <div class="subscriber-count text-6xl md:text-8xl font-bold mb-4" id="subscriber-count">0</div>
-        <div class="subscriber-change text-xl font-semibold" id="subscriber-change"></div>
-      </div>
-
-      <div class="flex justify-center gap-4 mt-8">
-        <button class="action-btn px-4 py-2 rounded-xl flex items-center" onclick="refreshCounter()">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-          </svg>
-          Refresh
-        </button>
-        <button class="action-btn px-4 py-2 rounded-xl flex items-center" onclick="activateMinimalMode()">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
-          </svg>
-          Minimal Mode
-        </button>
       </div>
     </section>
 
     <!-- Chart Section -->
-    <section class="glass-card p-8 mb-12 glow-effect hidden" id="chart-section" data-aos="fade-up">
-      <h3 class="text-xl font-bold mb-6 gradient-text">Subscriber Growth</h3>
-      <div class="chart-container h-80">
-        <canvas id="subscriberChart"></canvas>
+    <section class="glass-card mb-8 hidden" id="chart-section" data-aos="fade-up">
+      <div class="card-content">
+        <h3 class="text-lg font-semibold mb-5">Subscriber Growth</h3>
+        <div class="chart-container h-64">
+          <canvas id="subscriberChart"></canvas>
+        </div>
       </div>
     </section>
 
     <!-- Compare Section -->
-    <section class="glass-card p-8 mb-12 glow-effect hidden" id="compare-section" data-aos="fade-up">
-      <div class="flex justify-between items-center mb-8">
-        <h3 class="text-xl font-bold gradient-text">Channel Comparison</h3>
-        <button class="action-btn px-4 py-2 rounded-xl flex items-center" onclick="closeCompare()">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-          Close
-        </button>
-      </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8" id="compare-channels">
-        <!-- Will be filled dynamically -->
-      </div>
-      <div class="flex justify-center">
-        <button class="action-btn px-4 py-2 rounded-xl flex items-center" onclick="refreshCompare()">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-          </svg>
-          Refresh
-        </button>
+    <section class="glass-card mb-8 hidden" id="compare-section" data-aos="fade-up">
+      <div class="card-content">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-lg font-semibold">Channel Comparison</h3>
+          <button class="action-btn px-3 py-2 rounded-lg flex items-center text-sm" onclick="closeCompare()">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            Close
+          </button>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6" id="compare-channels">
+          <!-- Will be filled dynamically -->
+        </div>
+        <div class="flex justify-center">
+          <button class="action-btn px-3 py-2 rounded-lg flex items-center text-sm" onclick="refreshCompare()">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            Refresh
+          </button>
+        </div>
       </div>
     </section>
   </main>
 
   <!-- Footer -->
-  <footer class="px-6 py-12 border-t border-gray-900 bg-black/50 mt-16">
-    <div class="max-w-7xl mx-auto">
+  <footer class="px-6 py-8 border-t border-gray-800 bg-black/50 mt-auto">
+    <div class="max-w-5xl mx-auto">
       <div class="flex flex-col md:flex-row justify-between items-center">
-        <div class="mb-6 md:mb-0">
-          <a href="#" class="text-2xl font-bold gradient-text">DockyCount</a>
-          <p class="text-gray-500 mt-2">Real-time YouTube analytics</p>
+        <div class="mb-4 md:mb-0">
+          <a href="#" class="text-xl font-bold gradient-text">DockyCount</a>
+          <p class="text-gray-500 text-sm mt-1">Real-time YouTube analytics</p>
         </div>
       </div>
       
-      <div class="mt-12 pt-8 border-t border-gray-900 flex flex-col md:flex-row justify-between items-center">
-        <p class="text-gray-500 text-sm mb-4 md:mb-0">
+      <div class="mt-8 pt-6 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center">
+        <p class="text-gray-500 text-sm">
           © 2025 DockyCount. All rights reserved.
         </p>
       </div>
     </div>
   </footer>
 
-  <div class="toast fixed bottom-6 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-xl hidden" id="toast"></div>
+  <div class="toast fixed bottom-6 left-1/2 transform -translate-x-1/2 px-5 py-2 rounded-lg hidden bg-indigo-600 text-white text-sm" id="toast"></div>
 
   <!-- Scripts -->
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
@@ -454,8 +469,8 @@
     function init() {
       AOS.init({
         once: true,
-        duration: 800,
-        easing: 'ease-out-quart'
+        duration: 600,
+        easing: 'ease-out'
       });
       
       setupEventListeners();
@@ -488,6 +503,15 @@
           );
         }
       };
+
+      // Mobile menu toggle
+      document.getElementById('mobile-menu-button').addEventListener('click', toggleMobileMenu);
+    }
+    
+    // Toggle mobile menu
+    function toggleMobileMenu() {
+      const sidebar = document.getElementById('sidebar-favorites');
+      sidebar.classList.toggle('hidden');
     }
     
     // Handle navigation events
@@ -1044,22 +1068,22 @@
         differenceText = `${Math.abs(difference).toLocaleString()} more than ${channel2.name}`;
       } else if (difference < 0) {
         differenceClass = "bg-red-900/20 text-red-400";
-        differenceText = `${Math.abs(difference).toLocaleString()} less than ${channel2.name}`;
+        differenceText = `${Math.abs(ddifference).toLocaleString()} less than ${channel2.name}`;
       }
 
       elements.compareChannelsContainer.innerHTML = `
-        <div class="compare-channel glass-card p-6 text-center">
-          <img src="${channel1.avatar}" alt="${channel1.name}" class="compare-avatar w-20 h-20 rounded-full mx-auto mb-4">
+        <div class="compare-channel glass-card p-5 text-center">
+          <img src="${channel1.avatar}" alt="${channel1.name}" class="compare-avatar w-16 h-16 rounded-full mx-auto mb-3">
           <div class="compare-name font-bold mb-2">${channel1.name}</div>
-          <div id="compare-count-1" class="compare-count text-3xl font-bold">${channel1.count.toLocaleString()}</div>
+          <div id="compare-count-1" class="compare-count text-2xl font-bold">${channel1.count.toLocaleString()}</div>
         </div>
-        <div class="compare-channel glass-card p-6 text-center">
-          <img src="${channel2.avatar}" alt="${channel2.name}" class="compare-avatar w-20 h-20 rounded-full mx-auto mb-4">
+        <div class="compare-channel glass-card p-5 text-center">
+          <img src="${channel2.avatar}" alt="${channel2.name}" class="compare-avatar w-16 h-16 rounded-full mx-auto mb-3">
           <div class="compare-name font-bold mb-2">${channel2.name}</div>
-          <div id="compare-count-2" class="compare-count text-3xl font-bold">${channel2.count.toLocaleString()}</div>
+          <div id="compare-count-2" class="compare-count text-2xl font-bold">${channel2.count.toLocaleString()}</div>
         </div>
         <div class="col-span-2">
-          <div class="compare-difference ${differenceClass} p-4 rounded-xl text-center">
+          <div class="compare-difference ${differenceClass} p-3 rounded-lg text-center text-sm">
             ${channel1.name} has ${differenceText}
           </div>
         </div>
