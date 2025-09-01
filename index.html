@@ -200,6 +200,59 @@
     .text-muted {
       color: var(--text-light);
     }
+    
+    /* Loader animation */
+    .loader {
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top: 2px solid var(--primary);
+      width: 16px;
+      height: 16px;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    /* Toast notification improvements */
+    .toast {
+      z-index: 1000;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    /* Theme toggle improvements */
+    .theme-toggle {
+      cursor: pointer;
+      width: 40px;
+      height: 20px;
+    }
+    
+    .theme-toggle .slider {
+      border-radius: 34px;
+      transition: .4s;
+    }
+    
+    .theme-toggle input:checked + .slider {
+      background-color: var(--primary);
+    }
+    
+    .theme-toggle .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 2px;
+      bottom: 2px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+    
+    .theme-toggle input:checked + .slider:before {
+      transform: translateX(20px);
+    }
   </style>
 </head>
 <body class="bg-grid min-h-screen flex flex-col">
@@ -245,7 +298,7 @@
     </section>
 
     <!-- Search Section -->
-    <section class="glass-card mb-8" data-aos="fade-up">
+    <section class="glass-card mb-8" data-aos="fade-up" id="main-search-section">
       <div class="card-content">
         <div class="flex flex-col gap-4">
           <div class="flex flex-col md:flex-row gap-3 w-full">
@@ -506,6 +559,9 @@
 
       // Mobile menu toggle
       document.getElementById('mobile-menu-button').addEventListener('click', toggleMobileMenu);
+      
+      // Handle browser navigation (back/forward buttons)
+      window.addEventListener('popstate', handleNavigation);
     }
     
     // Toggle mobile menu
@@ -558,6 +614,7 @@
     // Reset the counter
     function resetCounter() {
       clearInterval(state.intervalId);
+      state.intervalId = null;
       elements.counterSection.classList.add('hidden');
       elements.chartSection.classList.add('hidden');
       elements.toggleChartButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg> Show Chart';
@@ -649,7 +706,7 @@
         `;
         
         channelElement.onclick = () => {
-          const newUrl = `${window.location.origin}/#${channel[2]}`;
+          const newUrl = `${window.location.origin}${window.location.pathname}#${channel[2]}`;
           window.history.pushState({}, '', newUrl);
 
           state.channelId = channel[2];
@@ -1044,12 +1101,14 @@
     function showCompare() {
       elements.compareSection.classList.remove('hidden');
       fetchCompareData();
+      startCompareInterval();
     }
 
     // Close the comparison view
     function closeCompare() {
       elements.compareSection.classList.add('hidden');
       state.compareChannels = [];
+      stopCompareInterval();
     }
 
     // Render comparison between channels
@@ -1068,7 +1127,7 @@
         differenceText = `${Math.abs(difference).toLocaleString()} more than ${channel2.name}`;
       } else if (difference < 0) {
         differenceClass = "bg-red-900/20 text-red-400";
-        differenceText = `${Math.abs(ddifference).toLocaleString()} less than ${channel2.name}`;
+        differenceText = `${Math.abs(difference).toLocaleString()} less than ${channel2.name}`;
       }
 
       elements.compareChannelsContainer.innerHTML = `
@@ -1250,6 +1309,29 @@
       elements.counterSection.classList.add('text-center');
       
       showToast("Minimal mode activated", 2000);
+    }
+
+    let compareIntervalId = null;
+
+    function startCompareInterval() {
+      // Arrêtez l'intervalle existant s'il y en a un
+      if (compareIntervalId) {
+        clearInterval(compareIntervalId);
+      }
+  
+      // Démarrez un nouvel intervalle pour refreshCompare() toutes les 2 secondes
+      compareIntervalId = setInterval(function() {
+        if (state.compareChannels && state.compareChannels.length === 2) {
+          refreshCompare();
+        }
+      }, 2000);
+    }
+
+    function stopCompareInterval() {
+      if (compareIntervalId) {
+        clearInterval(compareIntervalId);
+        compareIntervalId = null;
+      }
     }
 
     // Initialize the app when DOM is loaded
