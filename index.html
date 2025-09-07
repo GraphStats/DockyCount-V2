@@ -122,7 +122,6 @@
       to { opacity: 1; }
     }
 
-    /* Custom scrollbar */
     ::-webkit-scrollbar {
       width: 8px;
     }
@@ -136,12 +135,10 @@
       border-radius: 4px;
     }
 
-    /* Section spacing improvements */
     section {
       margin-bottom: 1.5rem;
     }
 
-    /* Improved button styles */
     .btn-primary {
       background: linear-gradient(135deg, var(--primary), var(--primary-dark));
       color: white;
@@ -152,13 +149,11 @@
       transform: translateY(-2px);
       box-shadow: 0 6px 15px -3px rgba(99, 102, 241, 0.3);
     }
-
-    /* Card content spacing */
+    
     .card-content {
       padding: 1.5rem;
     }
 
-    /* Responsive adjustments */
     @media (max-width: 900px) {
       .sidebar-favorites {
         display: none;
@@ -180,7 +175,6 @@
       }
     }
 
-    /* Simplified animations */
     .animate-float {
       animation: float 3s ease-in-out infinite;
     }
@@ -190,18 +184,15 @@
       50% { transform: translateY(-5px); }
     }
 
-    /* Improved focus states */
     button:focus, input:focus {
       outline: 2px solid var(--primary);
       outline-offset: 2px;
     }
 
-    /* Better contrast for text */
     .text-muted {
       color: var(--text-light);
     }
     
-    /* Loader animation */
     .loader {
       border: 2px solid rgba(255, 255, 255, 0.3);
       border-radius: 50%;
@@ -216,13 +207,11 @@
       100% { transform: rotate(360deg); }
     }
     
-    /* Toast notification improvements */
     .toast {
       z-index: 1000;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
     
-    /* Theme toggle improvements */
     .theme-toggle {
       cursor: pointer;
       width: 40px;
@@ -256,7 +245,6 @@
   </style>
 </head>
 <body class="bg-grid min-h-screen flex flex-col">
-  <!-- Sidebar Favorites -->
   <aside class="sidebar-favorites fixed top-0 left-0 w-64 h-full z-40 p-6 hidden md:block" id="sidebar-favorites">
     <div class="text-xl font-bold gradient-text mb-4">Your Favorite Channels</div>
     <div class="favorites-list overflow-y-auto max-h-[calc(100vh-120px)]" id="favorites-list">
