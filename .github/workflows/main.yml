@@ -1,4 +1,5 @@
 name: Fetch MrBeast Subs
+
 on:
   schedule:
     - cron: "*/30 * * * *"
