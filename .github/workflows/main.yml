@@ -10,12 +10,13 @@ permissions:
 
 jobs:
   fetch_subs:
+    if: github.ref == 'refs/heads/test'   # ✅ ne s’exécute que sur la branche test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}  # ⬅️ utilise le token fourni par GitHub
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Fetch subscriber count
         run: |
