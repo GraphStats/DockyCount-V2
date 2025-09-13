@@ -2,15 +2,17 @@ name: Fetch MrBeast Subs
 
 on:
   schedule:
-    - cron: "*/62 * * * *"
+    - cron: "*/62 * * * *"  # le cron tourne sur toutes les branches
   workflow_dispatch:
+    # tu peux limiter manuellement au besoin
+    inputs: {}
 
 permissions:
   contents: write
 
 jobs:
   fetch_subs:
-    if: github.ref == 'refs/heads/test'   # ✅ ne s’exécute que sur la branche test
+    if: github.ref == 'refs/heads/test'   # ✅ ne s’exécute que si la branche est test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
