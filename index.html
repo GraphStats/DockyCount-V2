@@ -17,7 +17,15 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/odometer.js/0.4.8/odometer.min.js"></script>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+async function getSpeedScores() {
+  try {
+    const res = await fetch("/api/speed?url=https://dockycount.vercel.app");
+    const data = await res.json();
+
+    console.log("Scores Speed Insights :", data);
+}
+
+getSpeedScores();
     import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
     import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
     import { SpeedInsights } from "@vercel/speed-insights/next"
