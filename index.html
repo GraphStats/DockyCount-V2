@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -16,6 +15,46 @@
   <meta name="google-adsense-account" content="ca-pub-7562628849511682">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/odometer.js/0.4.8/odometer.min.js"></script>
+  
+  <!-- Firebase App (the core Firebase SDK) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAjmXMMafuPYkYi1GzrnucNJSjxypN2gYQ",
+      authDomain: "docky-dev-fr.firebaseapp.com",
+      projectId: "docky-dev-fr",
+      storageBucket: "docky-dev-fr.firebasestorage.app",
+      messagingSenderId: "548202839817",
+      appId: "1:548202839817:web:832f713ae5135e41809dd8",
+      measurementId: "G-KLXHVFYQYY"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+    const db = getFirestore(app);
+
+    // Make Firebase available globally
+    window.firebase = {
+      auth,
+      provider,
+      db,
+      signInWithPopup,
+      signOut,
+      onAuthStateChanged,
+      doc,
+      setDoc,
+      getDoc,
+      updateDoc,
+      arrayUnion,
+      arrayRemove
+    };
+  </script>
+
   <style>
     :root {
       --primary: #6366f1;
@@ -243,13 +282,34 @@
     .theme-toggle input:checked + .slider:before {
       transform: translateX(20px);
     }
+
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .user-menu {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 0.5rem;
+      min-width: 150px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: 100;
+    }
   </style>
 </head>
 <body class="bg-grid min-h-screen flex flex-col">
   <aside class="sidebar-favorites fixed top-0 left-0 w-64 h-full z-40 p-6 hidden md:block" id="sidebar-favorites">
     <div class="text-xl font-bold gradient-text mb-4">Your Favorite Channels</div>
     <div class="favorites-list overflow-y-auto max-h-[calc(100vh-120px)]" id="favorites-list">
-      <div class="text-gray-500 text-sm">No favorite channels yet.</div>
+      <div class="text-gray-500 text-sm">Sign in to save favorites</div>
     </div>
   </aside>
 
@@ -260,6 +320,14 @@
         DockyCount
       </a>
       <div class="flex items-center space-x-3">
+        <div class="relative" id="auth-container">
+          <button id="sign-in-button" class="btn-primary text-sm px-3 py-1 rounded-lg">Sign In</button>
+          <div id="user-profile" class="hidden items-center">
+            <img id="user-avatar" class="user-avatar mr-2" src="" alt="User Avatar">
+            <span id="user-name" class="text-sm mr-2"></span>
+            <button id="sign-out-button" class="text-sm text-gray-400 hover:text-white">Sign Out</button>
+          </div>
+        </div>
         <button class="md:hidden text-gray-400 hover:text-white" id="mobile-menu-button">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
@@ -364,7 +432,9 @@
               Share
             </button>
             <button class="action-btn px-3 py-2 rounded-lg flex items-center text-sm" onclick="toggleChart()" id="toggle-chart-button">
-<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chart-area-icon lucide-chart-area"><path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M7 11.207a.5.5 0 0 1 .146-.353l2-2a.5.5 0 0 1 .708 0l3.292 3.292a.5.5 0 0 0 .708 0l4.292-4.292a.5.5 0 0 1 .854.353V16a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1z"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
               Chart
             </button>
             <button class="action-btn px-3 py-2 rounded-lg flex items-center text-sm" onclick="addToCompare()" id="compare-button">
@@ -393,7 +463,7 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
             </svg>
             Minimal
-          </button>
+            </button>
         </div>
       </div>
     </section>
@@ -470,7 +540,9 @@
       historicalData: [],
       lastSubscriberCount: 0,
       isDarkTheme: true, // Default to dark theme
-      compareChannels: [] // Array to store channels to compare
+      compareChannels: [], // Array to store channels to compare
+      currentUser: null,
+      userFavorites: []
     };
     
     // DOM elements cache
@@ -492,7 +564,13 @@
       themeKnob: document.getElementById("theme-knob"),
       body: document.body,
       compareSection: document.getElementById("compare-section"),
-      compareChannelsContainer: document.getElementById("compare-channels")
+      compareChannelsContainer: document.getElementById("compare-channels"),
+      authContainer: document.getElementById("auth-container"),
+      signInButton: document.getElementById("sign-in-button"),
+      signOutButton: document.getElementById("sign-out-button"),
+      userProfile: document.getElementById("user-profile"),
+      userAvatar: document.getElementById("user-avatar"),
+      userName: document.getElementById("user-name")
     };
 
     // Initialize the application
@@ -510,6 +588,106 @@
       
       // Apply dark theme by default
       applyDarkTheme();
+      
+      // Initialize Firebase Auth state listener
+      initAuth();
+    }
+    
+    // Initialize Firebase Authentication
+    function initAuth() {
+      window.firebase.onAuthStateChanged(window.firebase.auth, (user) => {
+        if (user) {
+          // User is signed in
+          state.currentUser = user;
+          updateAuthUI(user);
+          loadUserFavorites(user.uid);
+        } else {
+          // User is signed out
+          state.currentUser = null;
+          state.userFavorites = [];
+          updateAuthUI(null);
+          renderFavoritesSidebar();
+        }
+      });
+      
+      // Add event listeners for auth buttons
+      elements.signInButton.addEventListener('click', signInWithGoogle);
+      elements.signOutButton.addEventListener('click', signOutUser);
+    }
+    
+    // Sign in with Google
+    async function signInWithGoogle() {
+      try {
+        const result = await window.firebase.signInWithPopup(window.firebase.auth, window.firebase.provider);
+        // User signed in successfully
+        showToast("Signed in successfully!");
+      } catch (error) {
+        console.error("Error signing in:", error);
+        showToast("Error signing in. Please try again.");
+      }
+    }
+    
+    // Sign out user
+    async function signOutUser() {
+      try {
+        await window.firebase.signOut(window.firebase.auth);
+        showToast("Signed out successfully!");
+      } catch (error) {
+        console.error("Error signing out:", error);
+        showToast("Error signing out. Please try again.");
+      }
+    }
+    
+    // Update authentication UI based on user state
+    function updateAuthUI(user) {
+      if (user) {
+        // User is signed in
+        elements.signInButton.classList.add('hidden');
+        elements.userProfile.classList.remove('hidden');
+        elements.userAvatar.src = user.photoURL || 'https://via.placeholder.com/32';
+        elements.userName.textContent = user.displayName || 'User';
+      } else {
+        // User is signed out
+        elements.signInButton.classList.remove('hidden');
+        elements.userProfile.classList.add('hidden');
+      }
+    }
+    
+    // Load user favorites from Firestore
+    async function loadUserFavorites(userId) {
+      try {
+        const userDocRef = window.firebase.doc(window.firebase.db, 'users', userId);
+        const userDoc = await window.firebase.getDoc(userDocRef);
+        
+        if (userDoc.exists()) {
+          state.userFavorites = userDoc.data().favorites || [];
+        } else {
+          // Create user document if it doesn't exist
+          await window.firebase.setDoc(userDocRef, { favorites: [] });
+          state.userFavorites = [];
+        }
+        
+        renderFavoritesSidebar();
+        updateFavoriteStar();
+      } catch (error) {
+        console.error("Error loading user favorites:", error);
+        showToast("Error loading favorites");
+      }
+    }
+    
+    // Save user favorites to Firestore
+    async function saveUserFavorites() {
+      if (!state.currentUser) return;
+      
+      try {
+        const userDocRef = window.firebase.doc(window.firebase.db, 'users', state.currentUser.uid);
+        await window.firebase.updateDoc(userDocRef, {
+          favorites: state.userFavorites
+        });
+      } catch (error) {
+        console.error("Error saving user favorites:", error);
+        showToast("Error saving favorites");
+      }
     }
     
     // Set up event listeners
@@ -523,6 +701,12 @@
       // Favorite star click handler
       document.getElementById('favorite-star').onclick = function() {
         if (!state.channelId || !elements.channelName.textContent) return;
+        
+        if (!state.currentUser) {
+          showToast("Please sign in to save favorites");
+          return;
+        }
+        
         if (isFavorite(state.channelId)) {
           removeFavorite(state.channelId);
         } else {
@@ -892,29 +1076,17 @@
       }
     }
     
-    // FAVORITES SYSTEM
-    const FAVORITES_KEY = 'favoriteChannels';
-
-    // Load favorites from localStorage
-    function getFavorites() {
-      try {
-        return JSON.parse(localStorage.getItem(FAVORITES_KEY)) || [];
-      } catch {
-        return [];
-      }
-    }
-
-    // Save favorites to localStorage
-    function setFavorites(favorites) {
-      localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
-    }
-
+    // FAVORITES SYSTEM WITH FIREBASE
     // Add channel to favorites
     function addFavorite(channelId, name, avatar) {
-      let favorites = getFavorites();
-      if (!favorites.some(f => f.id === channelId)) {
-        favorites.push({ id: channelId, name, avatar });
-        setFavorites(favorites);
+      if (!state.currentUser) {
+        showToast("Please sign in to save favorites");
+        return;
+      }
+      
+      if (!state.userFavorites.some(f => f.id === channelId)) {
+        state.userFavorites.push({ id: channelId, name, avatar });
+        saveUserFavorites();
         showToast("Channel added to favorites!", 1500);
         updateFavoriteStar();
         renderFavoritesSidebar();
@@ -923,16 +1095,16 @@
 
     // Remove channel from favorites
     function removeFavorite(channelId) {
-      let favorites = getFavorites().filter(f => f.id !== channelId);
-      setFavorites(favorites);
+      state.userFavorites = state.userFavorites.filter(f => f.id !== channelId);
+      saveUserFavorites();
       showToast("Channel removed from favorites!", 1500);
-        updateFavoriteStar();
-        renderFavoritesSidebar();
+      updateFavoriteStar();
+      renderFavoritesSidebar();
     }
 
     // Check if channel is favorite
     function isFavorite(channelId) {
-      return getFavorites().some(f => f.id === channelId);
+      return state.userFavorites.some(f => f.id === channelId);
     }
 
     // Update favorite star UI
@@ -959,12 +1131,18 @@
     function renderFavoritesSidebar() {
       const list = document.getElementById('favorites-list');
       list.innerHTML = '';
-      const favorites = getFavorites();
-      if (favorites.length === 0) {
+      
+      if (!state.currentUser) {
+        list.innerHTML = '<div class="text-gray-500 text-sm">Sign in to save favorites</div>';
+        return;
+      }
+      
+      if (state.userFavorites.length === 0) {
         list.innerHTML = '<div class="text-gray-500 text-sm">No favorite channels yet.</div>';
         return;
       }
-      favorites.forEach(fav => {
+      
+      state.userFavorites.forEach(fav => {
         const item = document.createElement('div');
         item.className = 'favorite-channel flex items-center p-2 rounded-lg hover:bg-gray-800 cursor-pointer transition-colors mb-2';
         item.innerHTML = `
