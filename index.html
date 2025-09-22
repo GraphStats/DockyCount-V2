@@ -26,45 +26,46 @@
 </script>
 
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
-    import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+  import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+  import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyAjmXMMafuPYkYi1GzrnucNJSjxypN2gYQ",
-      authDomain: "docky-dev-fr.firebaseapp.com",
-      projectId: "docky-dev-fr",
-      storageBucket: "docky-dev-fr.firebasestorage.app",
-      messagingSenderId: "548202839817",
-      appId: "1:548202839817:web:832f713ae5135e41809dd8",
-      measurementId: "G-KLXHVFYQYY"
-    };
+  const firebaseConfig = {
+    apiKey: "AIzaSyAjmXMMafuPYkYi1GzrnucNJSjxypN2gYQ",
+    authDomain: "docky-dev-fr.firebaseapp.com",
+    projectId: "docky-dev-fr",
+    storageBucket: "docky-dev-fr.firebasestorage.app",
+    messagingSenderId: "548202839817",
+    appId: "1:548202839817:web:832f713ae5135e41809dd8",
+    measurementId: "G-KLXHVFYQYY"
+  };
 
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const provider = new GoogleAuthProvider();
-    const db = getFirestore(app);
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
+  const db = getFirestore(app);
 
-    // Make Firebase available globally
-    window.firebase = {
-      auth,
-      provider,
-      db,
-      signInWithPopup,
-      signOut,
-      onAuthStateChanged,
-      doc,
-      setDoc,
-      getDoc,
-      updateDoc,
-      arrayUnion,
-      arrayRemove
-    };
-  </script>
+  // Make Firebase available globally
+  window.firebase = {
+    auth,
+    provider,
+    db,
+    signInWithPopup,
+    signOut,
+    onAuthStateChanged,
+    doc,
+    setDoc,
+    getDoc,
+    updateDoc,
+    arrayUnion,
+    arrayRemove
+  };
 
-  
+  // Signal that Firebase is ready
+  window.firebaseReady = true;
+</script>
   <style>
     :root {
       --primary: #6366f1;
@@ -684,6 +685,35 @@
         showToast("Error loading favorites");
       }
     }
+
+    // Modify your init function to check if Firebase is ready
+function init() {
+  AOS.init({
+    once: true,
+    duration: 600,
+    easing: 'ease-out'
+  });
+  
+  setupEventListeners();
+  checkUrlFragment();
+  renderFavoritesSidebar();
+  updateFavoriteStar();
+  
+  applyDarkTheme();
+  
+  // Wait for Firebase to be ready
+  if (window.firebase) {
+    initAuth();
+  } else {
+    // Check every 100ms if Firebase is ready
+    const checkFirebase = setInterval(() => {
+      if (window.firebase) {
+        clearInterval(checkFirebase);
+        initAuth();
+      }
+    }, 100);
+  }
+}
     
     // Save user favorites to Firestore
     async function saveUserFavorites() {
