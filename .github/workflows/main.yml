@@ -15,20 +15,13 @@ jobs:
       - name: Decide if run
         id: decide
         run: |
-          # Génère un intervalle entre 15 et 60 minutes
-          INTERVAL=$(( RANDOM % 46 + 15 ))
-
-          # Récupère l'heure et les minutes écoulées
-          NOW=$(date +%s)
-          MINUTES=$(( NOW / 60 ))
-
-          # Vérifie si le nombre total de minutes est un multiple de l'intervalle
-          if [ $(( MINUTES % INTERVAL )) -eq 0 ]; then
+          # 80% de chance d'exécuter
+          if [ $(( RANDOM % 10 )) -lt 6 ]; then
             echo "run=true" >> $GITHUB_OUTPUT
-            echo "Chosen interval: $INTERVAL min -> ✅ Run"
+            echo "✅ Run (80% chance)"
           else
             echo "run=false" >> $GITHUB_OUTPUT
-            echo "Chosen interval: $INTERVAL min -> ❌ Skip"
+            echo "❌ Skip (20% chance)"
           fi
 
       - name: Checkout repo
