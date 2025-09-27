@@ -2,7 +2,7 @@ name: Fetch MrBeast Subs
 
 on:
   schedule:
-    - cron: "*/5 * * * *" # toutes les 5 minutes (minimum GitHub)
+    - cron: "0 0 * * *"
   workflow_dispatch:
 
 permissions:
