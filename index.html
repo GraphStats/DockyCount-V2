@@ -16,56 +16,7 @@
   <meta name="google-adsense-account" content="ca-pub-7562628849511682">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/odometer.js/0.4.8/odometer.min.js"></script>
-  <script defer src="/_vercel/speed-insights/script.js"></script>
-<script defer>
-  (function() {
-    const script = document.createElement('script');
-    script.src = '/_vercel/insights/script.js';
-    script.defer = true;
-    document.head.appendChild(script);
-  })();
-</script>
   
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
-  import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
-  import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyAjmXMMafuPYkYi1GzrnucNJSjxypN2gYQ",
-    authDomain: "docky-dev-fr.firebaseapp.com",
-    projectId: "docky-dev-fr",
-    storageBucket: "docky-dev-fr.firebasestorage.app",
-    messagingSenderId: "548202839817",
-    appId: "1:548202839817:web:832f713ae5135e41809dd8",
-    measurementId: "G-KLXHVFYQYY"
-  };
-
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const provider = new GoogleAuthProvider();
-  const db = getFirestore(app);
-
-  // Make Firebase available globally
-  window.firebase = {
-    auth,
-    provider,
-    db,
-    signInWithPopup,
-    signOut,
-    onAuthStateChanged,
-    doc,
-    setDoc,
-    getDoc,
-    updateDoc,
-    arrayUnion,
-    arrayRemove
-  };
-
-  // Signal that Firebase is ready
-  window.firebaseReady = true;
-</script>
   <style>
     :root {
       --primary: #8B5CF6;
@@ -606,6 +557,60 @@
       color: var(--primary);
       padding: 0 1rem;
     }
+    
+    /* Styles pour le mode minimal */
+    .minimal-mode {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--bg);
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+    }
+    
+    .minimal-counter {
+      font-size: 4rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+    
+    .minimal-channel {
+      font-size: 1.5rem;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+    
+    .minimal-actions {
+      display: flex;
+      gap: 1rem;
+    }
+    
+    .minimal-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      color: var(--text);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .minimal-close:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -630,29 +635,29 @@
 
       <!-- Navigation -->
       <nav class="mb-8">
-        <div class="nav-item active">
+        <div class="nav-item active" data-section="dashboard">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
           </svg>
           Dashboard
         </div>
-        <div class="nav-item">
+        <div class="nav-item" data-section="analytics">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
           </svg>
-          Analytics (SOON)
+          Analytics
         </div>
-        <div class="nav-item">
+        <div class="nav-item" data-section="compare">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
           </svg>
-          Compare (SOON)
+          Compare
         </div>
-        <div class="nav-item">
+        <div class="nav-item" data-section="favorites">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
           </svg>
-          Favorites (FIXING...)
+          Favorites
         </div>
       </nav>
 
@@ -688,25 +693,25 @@
 
   <!-- Mobile Navigation -->
   <div class="mobile-nav lg:hidden">
-    <div class="mobile-nav-item active">
+    <div class="mobile-nav-item active" data-section="dashboard">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
       </svg>
       Home
     </div>
-    <div class="mobile-nav-item">
+    <div class="mobile-nav-item" data-section="compare">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
       </svg>
       Compare
     </div>
-    <div class="mobile-nav-item">
+    <div class="mobile-nav-item" data-section="favorites">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
       </svg>
       Favorites
     </div>
-    <div class="mobile-nav-item">
+    <div class="mobile-nav-item" data-section="settings">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -724,7 +729,7 @@
     </header>
 
     <!-- Search Section -->
-    <section class="glass-card mb-8" data-aos="fade-up">
+    <section class="glass-card mb-8" data-aos="fade-up" id="dashboard-section">
       <div class="card-content">
         <div class="flex flex-col gap-5">
           <div class="flex flex-col md:flex-row gap-4 w-full">
@@ -885,6 +890,40 @@
       </div>
     </section>
 
+    <!-- Analytics Section -->
+    <section class="glass-card mb-8 hidden" id="analytics-section" data-aos="fade-up">
+      <div class="card-content">
+        <h3 class="text-lg font-semibold mb-5">Channel Analytics</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div class="stats-card">
+            <div class="stats-value" id="total-views">0</div>
+            <div class="stats-label">Total Views</div>
+          </div>
+          <div class="stats-card">
+            <div class="stats-value" id="total-videos">0</div>
+            <div class="stats-label">Total Videos</div>
+          </div>
+          <div class="stats-card">
+            <div class="stats-value" id="subscriber-growth">0%</div>
+            <div class="stats-label">Growth Rate (30d)</div>
+          </div>
+        </div>
+        <div class="chart-container h-64">
+          <canvas id="analyticsChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- Favorites Section -->
+    <section class="glass-card mb-8 hidden" id="favorites-section" data-aos="fade-up">
+      <div class="card-content">
+        <h3 class="text-lg font-semibold mb-5">Your Favorite Channels</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="favorites-grid">
+          <div class="text-gray-500 text-center p-4">No favorite channels yet.</div>
+        </div>
+      </div>
+    </section>
+
     <!-- Features Section -->
     <section class="mb-8" data-aos="fade-up">
       <h2 class="text-2xl font-bold mb-6 text-center gradient-text">Why Choose DockyCount?</h2>
@@ -921,14 +960,72 @@
     </section>
   </main>
 
+  <!-- Minimal Mode Overlay -->
+  <div class="minimal-mode hidden" id="minimal-mode">
+    <button class="minimal-close" onclick="deactivateMinimalMode()">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+    <div class="minimal-channel" id="minimal-channel-name">Channel Name</div>
+    <div class="minimal-counter" id="minimal-subscriber-count">0</div>
+    <div class="minimal-actions">
+      <button class="action-btn" onclick="refreshCounter()">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+        Refresh
+      </button>
+    </div>
+  </div>
+
   <!-- Toast Notification -->
   <div class="toast fixed bottom-6 left-1/2 transform -translate-x-1/2 px-5 py-3 rounded-lg hidden bg-gradient-to-r from-purple-600 to-teal-500 text-white text-sm font-medium shadow-lg" id="toast"></div>
 
   <!-- Scripts -->
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
   
-  <!-- Le reste du code JavaScript reste inchangé -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAjmXMMafuPYkYi1GzrnucNJSjxypN2gYQ",
+      authDomain: "docky-dev-fr.firebaseapp.com",
+      projectId: "docky-dev-fr",
+      storageBucket: "docky-dev-fr.firebasestorage.app",
+      messagingSenderId: "548202839817",
+      appId: "1:548202839817:web:832f713ae5135e41809dd8",
+      measurementId: "G-KLXHVFYQYY"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+    const db = getFirestore(app);
+
+    // Make Firebase available globally
+    window.firebase = {
+      auth,
+      provider,
+      db,
+      signInWithPopup,
+      signOut,
+      onAuthStateChanged,
+      doc,
+      setDoc,
+      getDoc,
+      updateDoc,
+      arrayUnion,
+      arrayRemove
+    };
+
+    // Signal that Firebase is ready
+    window.firebaseReady = true;
+  </script>
+
   <script>
     // Constants
     const API_BASE_URL = 'https://backend.mixerno.space/api/youtube/estv3/';
@@ -942,12 +1039,15 @@
       intervalId: null,
       odometer: null,
       subscriberChart: null,
+      analyticsChart: null,
       historicalData: [],
       lastSubscriberCount: 0,
-      isDarkTheme: true, // Default to dark theme
-      compareChannels: [], // Array to store channels to compare
+      isDarkTheme: true,
+      compareChannels: [],
       currentUser: null,
-      userFavorites: []
+      userFavorites: [],
+      compareIntervalId: null,
+      isMinimalMode: false
     };
     
     // DOM elements cache
@@ -966,7 +1066,6 @@
       chartSection: document.getElementById("chart-section"),
       toast: document.getElementById("toast"),
       themeSwitch: document.getElementById("theme-switch"),
-      themeKnob: document.getElementById("theme-knob"),
       body: document.body,
       compareSection: document.getElementById("compare-section"),
       compareChannelsContainer: document.getElementById("compare-channels"),
@@ -975,7 +1074,13 @@
       signOutButton: document.getElementById("sign-out-button"),
       userProfile: document.getElementById("user-profile"),
       userAvatar: document.getElementById("user-avatar"),
-      userName: document.getElementById("user-name")
+      userName: document.getElementById("user-name"),
+      minimalMode: document.getElementById("minimal-mode"),
+      minimalSubscriberCount: document.getElementById("minimal-subscriber-count"),
+      minimalChannelName: document.getElementById("minimal-channel-name"),
+      analyticsSection: document.getElementById("analytics-section"),
+      favoritesSection: document.getElementById("favorites-section"),
+      dashboardSection: document.getElementById("dashboard-section")
     };
 
     // Initialize the application
@@ -996,10 +1101,83 @@
       
       // Initialize Firebase Auth state listener
       initAuth();
+      
+      // Setup navigation
+      setupNavigation();
+    }
+    
+    // Setup navigation between sections
+    function setupNavigation() {
+      // Desktop navigation
+      const navItems = document.querySelectorAll('.nav-item');
+      navItems.forEach(item => {
+        item.addEventListener('click', () => {
+          const section = item.getAttribute('data-section');
+          showSection(section);
+          
+          // Update active state
+          navItems.forEach(nav => nav.classList.remove('active'));
+          item.classList.add('active');
+        });
+      });
+      
+      // Mobile navigation
+      const mobileNavItems = document.querySelectorAll('.mobile-nav-item');
+      mobileNavItems.forEach(item => {
+        item.addEventListener('click', () => {
+          const section = item.getAttribute('data-section');
+          showSection(section);
+          
+          // Update active state
+          mobileNavItems.forEach(nav => nav.classList.remove('active'));
+          item.classList.add('active');
+        });
+      });
+    }
+    
+    // Show specific section
+    function showSection(section) {
+      // Hide all sections
+      const sections = [
+        'dashboard-section',
+        'analytics-section',
+        'compare-section',
+        'favorites-section'
+      ];
+      
+      sections.forEach(sec => {
+        const element = document.getElementById(sec);
+        if (element) element.style.display = 'none';
+      });
+      
+      // Show the selected section
+      const targetSection = document.getElementById(`${section}-section`);
+      if (targetSection) {
+        targetSection.style.display = 'block';
+        
+        // Special handling for favorites section
+        if (section === 'favorites') {
+          renderFavoritesGrid();
+        }
+      }
     }
     
     // Initialize Firebase Authentication
     function initAuth() {
+      if (!window.firebase) {
+        // Wait for Firebase to be ready
+        const checkFirebase = setInterval(() => {
+          if (window.firebase) {
+            clearInterval(checkFirebase);
+            setupAuthListener();
+          }
+        }, 100);
+      } else {
+        setupAuthListener();
+      }
+    }
+    
+    function setupAuthListener() {
       window.firebase.onAuthStateChanged(window.firebase.auth, (user) => {
         if (user) {
           // User is signed in
@@ -1012,6 +1190,7 @@
           state.userFavorites = [];
           updateAuthUI(null);
           renderFavoritesSidebar();
+          renderFavoritesGrid();
         }
       });
       
@@ -1024,7 +1203,6 @@
     async function signInWithGoogle() {
       try {
         const result = await window.firebase.signInWithPopup(window.firebase.auth, window.firebase.provider);
-        // User signed in successfully
         showToast("Signed in successfully!");
       } catch (error) {
         console.error("Error signing in:", error);
@@ -1073,41 +1251,13 @@
         }
         
         renderFavoritesSidebar();
+        renderFavoritesGrid();
         updateFavoriteStar();
       } catch (error) {
         console.error("Error loading user favorites:", error);
         showToast("Error loading favorites");
       }
     }
-
-    // Modify your init function to check if Firebase is ready
-function init() {
-  AOS.init({
-    once: true,
-    duration: 600,
-    easing: 'ease-out'
-  });
-  
-  setupEventListeners();
-  checkUrlFragment();
-  renderFavoritesSidebar();
-  updateFavoriteStar();
-  
-  applyDarkTheme();
-  
-  // Wait for Firebase to be ready
-  if (window.firebase) {
-    initAuth();
-  } else {
-    // Check every 100ms if Firebase is ready
-    const checkFirebase = setInterval(() => {
-      if (window.firebase) {
-        clearInterval(checkFirebase);
-        initAuth();
-      }
-    }, 100);
-  }
-}
     
     // Save user favorites to Firestore
     async function saveUserFavorites() {
@@ -1152,17 +1302,8 @@ function init() {
         }
       };
 
-      // Mobile menu toggle
-      document.getElementById('mobile-menu-button').addEventListener('click', toggleMobileMenu);
-      
       // Handle browser navigation (back/forward buttons)
       window.addEventListener('popstate', handleNavigation);
-    }
-    
-    // Toggle mobile menu
-    function toggleMobileMenu() {
-      const sidebar = document.getElementById('sidebar-favorites');
-      sidebar.classList.toggle('hidden');
     }
     
     // Handle navigation events
@@ -1212,7 +1353,7 @@ function init() {
       state.intervalId = null;
       elements.counterSection.classList.add('hidden');
       elements.chartSection.classList.add('hidden');
-      elements.toggleChartButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg> Show Chart';
+      elements.toggleChartButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg> Show Chart';
       state.historicalData = [];
       document.title = "DockyCount - YouTube Subscriber Counter";
     }
@@ -1438,6 +1579,11 @@ function init() {
               
               state.lastSubscriberCount = subscriberCount;
               updateChart(subscriberCount);
+              
+              // Update minimal mode if active
+              if (state.isMinimalMode) {
+                elements.minimalSubscriberCount.textContent = subscriberCount.toLocaleString();
+              }
             }
           }
         } else {
@@ -1522,6 +1668,7 @@ function init() {
         showToast("Channel added to favorites!", 1500);
         updateFavoriteStar();
         renderFavoritesSidebar();
+        renderFavoritesGrid();
       }
     }
 
@@ -1532,6 +1679,7 @@ function init() {
       showToast("Channel removed from favorites!", 1500);
       updateFavoriteStar();
       renderFavoritesSidebar();
+      renderFavoritesGrid();
     }
 
     // Check if channel is favorite
@@ -1597,10 +1745,56 @@ function init() {
       });
     }
 
+    // Render favorites grid in the favorites section
+    function renderFavoritesGrid() {
+      const grid = document.getElementById('favorites-grid');
+      grid.innerHTML = '';
+      
+      if (!state.currentUser) {
+        grid.innerHTML = '<div class="text-gray-500 text-center p-4">Please sign in to view your favorite channels.</div>';
+        return;
+      }
+      
+      if (state.userFavorites.length === 0) {
+        grid.innerHTML = '<div class="text-gray-500 text-center p-4">No favorite channels yet.</div>';
+        return;
+      }
+      
+      state.userFavorites.forEach(fav => {
+        const channelElement = document.createElement("div");
+        channelElement.className = "glass-card p-4 cursor-pointer transition-all hover:scale-105 channel-card";
+        channelElement.innerHTML = `
+          <img src="${fav.avatar}" alt="${fav.name}" class="channel-avatar w-16 h-16 rounded-full mx-auto mb-3">
+          <div class="channel-name text-center font-medium">${fav.name}</div>
+          <div class="text-center mt-2">
+            <button class="action-btn" onclick="viewFavoriteChannel('${fav.id}')">View Stats</button>
+          </div>
+        `;
+        
+        grid.appendChild(channelElement);
+      });
+    }
+
+    // View favorite channel
+    function viewFavoriteChannel(channelId) {
+      const newUrl = `${window.location.origin}${window.location.pathname}#${channelId}`;
+      window.history.pushState({}, '', newUrl);
+
+      state.channelId = channelId;
+      resetCounter();
+      startCounter();
+      
+      // Switch to dashboard section
+      showSection('dashboard');
+      document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+      document.querySelector('.nav-item[data-section="dashboard"]').classList.add('active');
+    }
+
     // Update channel info
     function updateChannelInfo(channel) {
       elements.channelAvatar.src = channel.snippet.thumbnails.default.url;
       elements.channelName.textContent = channel.snippet.title;
+      elements.minimalChannelName.textContent = channel.snippet.title;
       document.title = `${channel.snippet.title} - DockyCount`;
       updateFavoriteStar();
       renderFavoritesSidebar();
@@ -1789,7 +1983,7 @@ function init() {
     // Show compare search bar
     function showCompareSearchBar() {
       document.getElementById('compare-search-section').classList.remove('hidden');
-      document.getElementById('main-search-section').classList.add('hidden');
+      document.getElementById('dashboard-section').classList.add('hidden');
       document.getElementById('results-section').classList.add('hidden');
       document.getElementById('compare-input-1').value = '';
       document.getElementById('compare-input-2').value = '';
@@ -1801,7 +1995,7 @@ function init() {
     // Hide compare search bar
     function hideCompareSearchBar() {
       document.getElementById('compare-search-section').classList.add('hidden');
-      document.getElementById('main-search-section').classList.remove('hidden');
+      document.getElementById('dashboard-section').classList.remove('hidden');
     }
 
     // Fetch search results for comparison
@@ -1883,42 +2077,54 @@ function init() {
       });
     }
 
-    // Minimal mode function
-    function activateMinimalMode() {
-      // Hide all sections except the counter
-      document.getElementById('main-search-section').classList.add('hidden');
-      document.getElementById('compare-search-section').classList.add('hidden');
-      document.getElementById('results-section').classList.add('hidden');
-      document.getElementById('chart-section').classList.add('hidden');
-      document.getElementById('compare-section').classList.add('hidden');
-      
-      // Make the counter section more minimal
-      elements.counterSection.classList.add('text-center');
-      
-      showToast("Minimal mode activated", 2000);
-    }
-
-    let compareIntervalId = null;
-
+    // Start compare interval
     function startCompareInterval() {
-      // Arrêtez l'intervalle existant s'il y en a un
-      if (compareIntervalId) {
-        clearInterval(compareIntervalId);
+      // Stop existing interval if there is one
+      if (state.compareIntervalId) {
+        clearInterval(state.compareIntervalId);
       }
   
-      // Démarrez un nouvel intervalle pour refreshCompare() toutes les 2 secondes
-      compareIntervalId = setInterval(function() {
+      // Start a new interval for refreshCompare() every 2 seconds
+      state.compareIntervalId = setInterval(function() {
         if (state.compareChannels && state.compareChannels.length === 2) {
           refreshCompare();
         }
       }, 2000);
     }
 
+    // Stop compare interval
     function stopCompareInterval() {
-      if (compareIntervalId) {
-        clearInterval(compareIntervalId);
-        compareIntervalId = null;
+      if (state.compareIntervalId) {
+        clearInterval(state.compareIntervalId);
+        state.compareIntervalId = null;
       }
+    }
+
+    // Minimal mode function
+    function activateMinimalMode() {
+      if (!state.channelId) {
+        showToast("No channel selected");
+        return;
+      }
+      
+      state.isMinimalMode = true;
+      elements.minimalMode.classList.remove('hidden');
+      elements.minimalChannelName.textContent = elements.channelName.textContent;
+      elements.minimalSubscriberCount.textContent = state.lastSubscriberCount.toLocaleString();
+      
+      // Hide all other sections
+      document.querySelectorAll('section').forEach(section => {
+        section.style.display = 'none';
+      });
+    }
+
+    // Deactivate minimal mode
+    function deactivateMinimalMode() {
+      state.isMinimalMode = false;
+      elements.minimalMode.classList.add('hidden');
+      
+      // Show dashboard section
+      document.getElementById('dashboard-section').style.display = 'block';
     }
 
     // Initialize the app when DOM is loaded
