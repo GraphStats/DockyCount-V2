@@ -2,7 +2,7 @@ name: Fetch MrBeast Subs
 
 on:
   schedule:
-    - cron: "0 0 * * *"
+    - cron: "*/5 * * * *"
   workflow_dispatch:
 
 permissions:
@@ -16,12 +16,12 @@ jobs:
         id: decide
         run: |
           # 80% de chance d'exécuter
-          if [ $(( RANDOM % 10 )) -lt 6 ]; then
+          if [ $(( RANDOM % 10 )) -lt 7 ]; then
             echo "run=true" >> $GITHUB_OUTPUT
-            echo "✅ Run (80% chance)"
+            echo "✅ Run (70% chance)"
           else
             echo "run=false" >> $GITHUB_OUTPUT
-            echo "❌ Skip (20% chance)"
+            echo "❌ Skip (30% chance)"
           fi
 
       - name: Checkout repo
