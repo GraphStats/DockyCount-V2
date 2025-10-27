@@ -1233,9 +1233,24 @@ async function saveUserFavorites() {
 
   try {
     const userDocRef = window.firebase.doc(window.firebase.db, 'users', state.currentUser.uid);
-    await window.firebase.setDoc(userDocRef, {
-      favorites: state.userFavorites
-    }, { merge: true }); // <-- Use setDoc with merge
+    
+    // First check if the document exists
+    const docSnap = await window.firebase.getDoc(userDocRef);
+    
+    if (docSnap.exists()) {
+      // Document exists, update it
+      await window.firebase.updateDoc(userDocRef, {
+        favorites: state.userFavorites
+      });
+    } else {
+      // Document doesn't exist, create it
+      await window.firebase.setDoc(userDocRef, {
+        email: state.currentUser.email,
+        displayName: state.currentUser.displayName,
+        photoURL: state.currentUser.photoURL,
+        favorites: state.userFavorites
+      });
+    }
   } catch (error) {
     console.error("Error saving user favorites:", error);
     showToast("Error saving favorites");
