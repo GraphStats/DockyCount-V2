@@ -1228,19 +1228,19 @@ function init() {
     }
 
     // Save user favorites to Firestore
-    async function saveUserFavorites() {
-      if (!state.currentUser) return;
-      
-      try {
-        const userDocRef = window.firebase.doc(window.firebase.db, 'users', state.currentUser.uid);
-        await window.firebase.updateDoc(userDocRef, {
-          favorites: state.userFavorites
-        });
-      } catch (error) {
-        console.error("Error saving user favorites:", error);
-        showToast("Error saving favorites");
-      }
-    }
+async function saveUserFavorites() {
+  if (!state.currentUser) return;
+
+  try {
+    const userDocRef = window.firebase.doc(window.firebase.db, 'users', state.currentUser.uid);
+    await window.firebase.setDoc(userDocRef, {
+      favorites: state.userFavorites
+    }, { merge: true }); // <-- Use setDoc with merge
+  } catch (error) {
+    console.error("Error saving user favorites:", error);
+    showToast("Error saving favorites");
+  }
+}
     
     // Set up event listeners
     function setupEventListeners() {
