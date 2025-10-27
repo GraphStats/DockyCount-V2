@@ -1005,33 +1005,26 @@ body {
     
     // DOM elements cache
     const elements = {
-      channelInput: document.getElementById("channel-input"),
-      loader: document.getElementById("loader"),
-      searchText: document.getElementById("search-text"),
-      resultsSection: document.getElementById("results-section"),
-      resultsGrid: document.getElementById("results-grid"),
-      counterSection: document.getElementById("counter-section"),
-      channelAvatar: document.getElementById("channel-avatar"),
-      channelName: document.getElementById("channel-name"),
-      subscriberCount: document.getElementById("subscriber-count"),
-      subscriberChange: document.getElementById("subscriber-change"),
-      toggleChartButton: document.getElementById("toggle-chart-button"),
-      chartSection: document.getElementById("chart-section"),
-      toast: document.getElementById("toast"),
-      themeSwitch: document.getElementById("theme-switch"),
-      themeKnob: document.getElementById("theme-knob"),
-      body: document.body,
-      compareSection: document.getElementById("compare-section"),
-      compareChannelsContainer: document.getElementById("compare-channels"),
-      authContainer: document.getElementById("auth-container"),
-      signInButton: document.getElementById("sign-in-button"),
-      signOutButton: document.getElementById("sign-out-button"),
-      userProfile: document.getElementById("user-profile"),
-      userAvatar: document.getElementById("user-avatar"),
-      userName: document.getElementById("user-name")
+      get channelInput() { return document.getElementById("channel-input") },
+      get loader() { return document.getElementById("loader") },
+      get searchText() { return document.getElementById("search-text") },
+      get resultsSection() { return document.getElementById("results-section") },
+      get resultsGrid() { return document.getElementById("results-grid") },
+      get counterSection() { return document.getElementById("counter-section") },
+      get channelAvatar() { return document.getElementById("channel-avatar") },
+      get channelName() { return document.getElementById("channel-name") },
+      get subscriberCount() { return document.getElementById("subscriber-count") },
+      get subscriberChange() { return document.getElementById("subscriber-change") },
+      get toggleChartButton() { return document.getElementById("toggle-chart-button") },
+      get chartSection() { return document.getElementById("chart-section") },
+      get toast() { return document.getElementById("toast") },
+      get themeSwitch() { return document.getElementById("theme-switch") },
+      get body() { return document.body },
+      get compareSection() { return document.getElementById("compare-section") },
+      get compareChannelsContainer() { return document.getElementById("compare-channels") }
     };
 
-// Fonction pour toggle la sidebar mobile
+    // Fonction pour toggle la sidebar mobile
 function toggleMobileSidebar() {
   const sidebar = document.querySelector('.sidebar-favorites');
   sidebar.classList.toggle('mobile-open');
@@ -1047,150 +1040,106 @@ function closeMobileSidebar() {
 
 // Mettez à jour vos event listeners pour fermer la sidebar
 function setupEventListeners() {
-  // ... votre code existant ...
+  // Keyboard shortcuts
+  document.addEventListener('keydown', handleKeyboardShortcuts);
   
-  // Fermer la sidebar au clic sur les liens
-  document.querySelectorAll('.nav-item, .favorite-channel').forEach(item => {
-    item.addEventListener('click', closeMobileSidebar);
-  });
+  // Theme toggle
+  const themeSwitch = document.getElementById("theme-switch");
+  if (themeSwitch) {
+    themeSwitch.addEventListener('change', toggleTheme);
+  }
   
-  // Fermer la sidebar quand on redimensionne la fenêtre
-  window.addEventListener('resize', function() {
-    if (window.innerWidth > 1024) {
-      const sidebar = document.querySelector('.sidebar-favorites');
-      sidebar.classList.remove('mobile-open');
-    }
-  });
-}
-    
-    // Initialize the application
-    function init() {
-      AOS.init({
-        once: true,
-        duration: 600,
-        easing: 'ease-out'
-      });
+  // Favorite star
+  const favoriteStar = document.getElementById('favorite-star');
+  if (favoriteStar) {
+    favoriteStar.onclick = function() {
+      if (!state.channelId || !elements.channelName.textContent) return;
       
+      if (!state.currentUser) {
+        showToast("Please sign in to save favorites");
+        return;
+      }
+      
+      if (isFavorite(state.channelId)) {
+        removeFavorite(state.channelId);
+      } else {
+        addFavorite(
+          state.channelId,
+          elements.channelName.textContent,
+          elements.channelAvatar.src
+        );
+      }
+    };
+  }
+
+  // Mobile menu button
+  const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+  if (mobileMenuBtn) {
+    mobileMenuBtn.addEventListener('click', toggleMobileSidebar);
+  }
+  
+  // Handle browser navigation
+  window.addEventListener('popstate', handleNavigation);
+}
+
+// Modifier la fonction init pour s'assurer que Firebase est chargé
+function init() {
+  try {
+    AOS.init({
+      once: true,
+      duration: 600,
+      easing: 'ease-out'
+    });
+    
+    // Attendre que le DOM soit complètement chargé
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => {
+        setupEventListeners();
+        checkUrlFragment();
+        renderFavoritesSidebar();
+        updateFavoriteStar();
+      });
+    } else {
       setupEventListeners();
       checkUrlFragment();
       renderFavoritesSidebar();
       updateFavoriteStar();
-      
-      // Apply dark theme by default
-      applyDarkTheme();
-      
-      // Initialize Firebase Auth state listener
-      initAuth();
     }
     
-    // Initialize Firebase Authentication
-    function initAuth() {
-      window.firebase.onAuthStateChanged(window.firebase.auth, (user) => {
-        if (user) {
-          // User is signed in
-          state.currentUser = user;
-          updateAuthUI(user);
-          loadUserFavorites(user.uid);
-        } else {
-          // User is signed out
-          state.currentUser = null;
-          state.userFavorites = [];
-          updateAuthUI(null);
-          renderFavoritesSidebar();
+    applyDarkTheme();
+    
+    // Vérification de Firebase avec timeout
+    const FIREBASE_TIMEOUT = 5000; // 5 secondes
+    const firebaseCheck = new Promise((resolve, reject) => {
+      if (window.firebase) {
+        resolve();
+      }
+      
+      const interval = setInterval(() => {
+        if (window.firebase) {
+          clearInterval(interval);
+          resolve();
         }
+      }, 100);
+      
+      setTimeout(() => {
+        clearInterval(interval);
+        reject(new Error('Firebase failed to load'));
+      }, FIREBASE_TIMEOUT);
+    });
+
+    firebaseCheck
+      .then(() => {
+        initAuth();
+      })
+      .catch((error) => {
+        console.error('Firebase initialization error:', error);
+        showToast('Error loading authentication system');
       });
       
-      // Add event listeners for auth buttons
-      elements.signInButton.addEventListener('click', signInWithGoogle);
-      elements.signOutButton.addEventListener('click', signOutUser);
-    }
-    
-    // Sign in with Google
-    async function signInWithGoogle() {
-      try {
-        const result = await window.firebase.signInWithPopup(window.firebase.auth, window.firebase.provider);
-        // User signed in successfully
-        showToast("Signed in successfully!");
-      } catch (error) {
-        console.error("Error signing in:", error);
-        showToast("Error signing in. Please try again.");
-      }
-    }
-    
-    // Sign out user
-    async function signOutUser() {
-      try {
-        await window.firebase.signOut(window.firebase.auth);
-        showToast("Signed out successfully!");
-      } catch (error) {
-        console.error("Error signing out:", error);
-        showToast("Error signing out. Please try again.");
-      }
-    }
-    
-    // Update authentication UI based on user state
-    function updateAuthUI(user) {
-      if (user) {
-        // User is signed in
-        elements.signInButton.classList.add('hidden');
-        elements.userProfile.classList.remove('hidden');
-        elements.userAvatar.src = user.photoURL || 'https://via.placeholder.com/32';
-        elements.userName.textContent = user.displayName || 'User';
-      } else {
-        // User is signed out
-        elements.signInButton.classList.remove('hidden');
-        elements.userProfile.classList.add('hidden');
-      }
-    }
-    
-    // Load user favorites from Firestore
-    async function loadUserFavorites(userId) {
-      try {
-        const userDocRef = window.firebase.doc(window.firebase.db, 'users', userId);
-        const userDoc = await window.firebase.getDoc(userDocRef);
-        
-        if (userDoc.exists()) {
-          state.userFavorites = userDoc.data().favorites || [];
-        } else {
-          // Create user document if it doesn't exist
-          await window.firebase.setDoc(userDocRef, { favorites: [] });
-          state.userFavorites = [];
-        }
-        
-        renderFavoritesSidebar();
-        updateFavoriteStar();
-      } catch (error) {
-        console.error("Error loading user favorites:", error);
-        showToast("Error loading favorites");
-      }
-    }
-
-    // Modify your init function to check if Firebase is ready
-function init() {
-  AOS.init({
-    once: true,
-    duration: 600,
-    easing: 'ease-out'
-  });
-  
-  setupEventListeners();
-  checkUrlFragment();
-  renderFavoritesSidebar();
-  updateFavoriteStar();
-  
-  applyDarkTheme();
-  
-  // Wait for Firebase to be ready
-  if (window.firebase) {
-    initAuth();
-  } else {
-    // Check every 100ms if Firebase is ready
-    const checkFirebase = setInterval(() => {
-      if (window.firebase) {
-        clearInterval(checkFirebase);
-        initAuth();
-      }
-    }, 100);
+  } catch (error) {
+    console.error('Initialization error:', error);
+    showToast('Error initializing application');
   }
 }
     
@@ -1215,32 +1164,41 @@ function init() {
       document.addEventListener('keydown', handleKeyboardShortcuts);
       
       // Theme toggle
-      elements.themeSwitch.addEventListener('change', toggleTheme);
+      const themeSwitch = document.getElementById("theme-switch");
+      if (themeSwitch) {
+        themeSwitch.addEventListener('change', toggleTheme);
+      }
       
-      // Favorite star click handler
-      document.getElementById('favorite-star').onclick = function() {
-        if (!state.channelId || !elements.channelName.textContent) return;
-        
-        if (!state.currentUser) {
-          showToast("Please sign in to save favorites");
-          return;
-        }
-        
-        if (isFavorite(state.channelId)) {
-          removeFavorite(state.channelId);
-        } else {
-          addFavorite(
-            state.channelId,
-            elements.channelName.textContent,
-            elements.channelAvatar.src
-          );
-        }
-      };
+      // Favorite star
+      const favoriteStar = document.getElementById('favorite-star');
+      if (favoriteStar) {
+        favoriteStar.onclick = function() {
+          if (!state.channelId || !elements.channelName.textContent) return;
+          
+          if (!state.currentUser) {
+            showToast("Please sign in to save favorites");
+            return;
+          }
+          
+          if (isFavorite(state.channelId)) {
+            removeFavorite(state.channelId);
+          } else {
+            addFavorite(
+              state.channelId,
+              elements.channelName.textContent,
+              elements.channelAvatar.src
+            );
+          }
+        };
+      }
 
-      // Mobile menu toggle
-      document.getElementById('mobile-menu-button').addEventListener('click', toggleMobileMenu);
+      // Mobile menu button
+      const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+      if (mobileMenuBtn) {
+        mobileMenuBtn.addEventListener('click', toggleMobileSidebar);
+      }
       
-      // Handle browser navigation (back/forward buttons)
+      // Handle browser navigation
       window.addEventListener('popstate', handleNavigation);
     }
     
@@ -1692,60 +1650,108 @@ function init() {
       });
     }
 
-    // Amélioration de la gestion de la sidebar mobile
-function setupMobileMenu() {
+    // Modifier la fonction setupEventListeners pour inclure des vérifications
+function setupEventListeners() {
+  // Keyboard shortcuts
+  document.addEventListener('keydown', handleKeyboardShortcuts);
+  
+  // Theme toggle
+  const themeSwitch = document.getElementById("theme-switch");
+  if (themeSwitch) {
+    themeSwitch.addEventListener('change', toggleTheme);
+  }
+  
+  // Favorite star
+  const favoriteStar = document.getElementById('favorite-star');
+  if (favoriteStar) {
+    favoriteStar.onclick = function() {
+      if (!state.channelId || !elements.channelName.textContent) return;
+      
+      if (!state.currentUser) {
+        showToast("Please sign in to save favorites");
+        return;
+      }
+      
+      if (isFavorite(state.channelId)) {
+        removeFavorite(state.channelId);
+      } else {
+        addFavorite(
+          state.channelId,
+          elements.channelName.textContent,
+          elements.channelAvatar.src
+        );
+      }
+    };
+  }
+
+  // Mobile menu button
   const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-  const sidebar = document.querySelector('.sidebar-favorites');
-  const container = document.querySelector('main.container');
-
-  mobileMenuBtn.addEventListener('click', () => {
-    sidebar.classList.toggle('mobile-open');
-  });
-
-  // Fermer la sidebar quand on clique en dehors
-  document.addEventListener('click', (e) => {
-    if (window.innerWidth < 1024 && 
-        !sidebar.contains(e.target) && 
-        !mobileMenuBtn.contains(e.target) && 
-        sidebar.classList.contains('mobile-open')) {
-      sidebar.classList.remove('mobile-open');
-    }
-  });
-
-  // Gérer le redimensionnement de la fenêtre
-  window.addEventListener('resize', () => {
-    if (window.innerWidth >= 1024) {
-      sidebar.classList.remove('mobile-open');
-    }
-  });
+  if (mobileMenuBtn) {
+    mobileMenuBtn.addEventListener('click', toggleMobileSidebar);
+  }
+  
+  // Handle browser navigation
+  window.addEventListener('popstate', handleNavigation);
 }
 
-// Améliorer l'initialisation
+// Modifier la fonction init pour s'assurer que Firebase est chargé
 function init() {
-  AOS.init({
-    once: true,
-    duration: 600,
-    easing: 'ease-out'
-  });
-  
-  setupEventListeners();
-  checkUrlFragment();
-  renderFavoritesSidebar();
-  updateFavoriteStar();
-  
-  applyDarkTheme();
-  
-  // Wait for Firebase to be ready
-  if (window.firebase) {
-    initAuth();
-  } else {
-    // Check every 100ms if Firebase is ready
-    const checkFirebase = setInterval(() => {
+  try {
+    AOS.init({
+      once: true,
+      duration: 600,
+      easing: 'ease-out'
+    });
+    
+    // Attendre que le DOM soit complètement chargé
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => {
+        setupEventListeners();
+        checkUrlFragment();
+        renderFavoritesSidebar();
+        updateFavoriteStar();
+      });
+    } else {
+      setupEventListeners();
+      checkUrlFragment();
+      renderFavoritesSidebar();
+      updateFavoriteStar();
+    }
+    
+    applyDarkTheme();
+    
+    // Vérification de Firebase avec timeout
+    const FIREBASE_TIMEOUT = 5000; // 5 secondes
+    const firebaseCheck = new Promise((resolve, reject) => {
       if (window.firebase) {
-        clearInterval(checkFirebase);
-        initAuth();
+        resolve();
       }
-    }, 100);
+      
+      const interval = setInterval(() => {
+        if (window.firebase) {
+          clearInterval(interval);
+          resolve();
+        }
+      }, 100);
+      
+      setTimeout(() => {
+        clearInterval(interval);
+        reject(new Error('Firebase failed to load'));
+      }, FIREBASE_TIMEOUT);
+    });
+
+    firebaseCheck
+      .then(() => {
+        initAuth();
+      })
+      .catch((error) => {
+        console.error('Firebase initialization error:', error);
+        showToast('Error loading authentication system');
+      });
+      
+  } catch (error) {
+    console.error('Initialization error:', error);
+    showToast('Error initializing application');
   }
 }
     
@@ -1770,32 +1776,41 @@ function init() {
       document.addEventListener('keydown', handleKeyboardShortcuts);
       
       // Theme toggle
-      elements.themeSwitch.addEventListener('change', toggleTheme);
+      const themeSwitch = document.getElementById("theme-switch");
+      if (themeSwitch) {
+        themeSwitch.addEventListener('change', toggleTheme);
+      }
       
-      // Favorite star click handler
-      document.getElementById('favorite-star').onclick = function() {
-        if (!state.channelId || !elements.channelName.textContent) return;
-        
-        if (!state.currentUser) {
-          showToast("Please sign in to save favorites");
-          return;
-        }
-        
-        if (isFavorite(state.channelId)) {
-          removeFavorite(state.channelId);
-        } else {
-          addFavorite(
-            state.channelId,
-            elements.channelName.textContent,
-            elements.channelAvatar.src
-          );
-        }
-      };
+      // Favorite star
+      const favoriteStar = document.getElementById('favorite-star');
+      if (favoriteStar) {
+        favoriteStar.onclick = function() {
+          if (!state.channelId || !elements.channelName.textContent) return;
+          
+          if (!state.currentUser) {
+            showToast("Please sign in to save favorites");
+            return;
+          }
+          
+          if (isFavorite(state.channelId)) {
+            removeFavorite(state.channelId);
+          } else {
+            addFavorite(
+              state.channelId,
+              elements.channelName.textContent,
+              elements.channelAvatar.src
+            );
+          }
+        };
+      }
 
-      // Mobile menu toggle
-      document.getElementById('mobile-menu-button').addEventListener('click', toggleMobileMenu);
+      // Mobile menu button
+      const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+      if (mobileMenuBtn) {
+        mobileMenuBtn.addEventListener('click', toggleMobileSidebar);
+      }
       
-      // Handle browser navigation (back/forward buttons)
+      // Handle browser navigation
       window.addEventListener('popstate', handleNavigation);
     }
     
@@ -2267,7 +2282,7 @@ function init() {
         }
       } else {
         elements.chartSection.classList.add('hidden');
-        elements.toggleChartButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg> Show Chart';
+        elements.toggleChartButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg> Show Chart';
       }
     }
 
